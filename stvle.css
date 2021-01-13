@@ -35,7 +35,7 @@ body{ background-color:#000000;}
 }
 
 .button{
-  background: linear-gradient(90deg,#6100FF 0,#590DD4, #511AA9);
+  background: linear-gradient(90deg,red 0,#a100ff);
   border:none;
   color:#fff;
   font-size:15px;
