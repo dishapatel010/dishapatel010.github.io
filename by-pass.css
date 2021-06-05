@@ -1,5 +1,5 @@
 body {
-  background: #e9ecef;
+  background: #0080ff;
   font-family: 'Raleway', sans-serif;
   text-align: center;
 }
@@ -9,7 +9,7 @@ input[type=text], select {
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #ccc;
+  border: 1px solid #000;
   border-radius: 4px;
   box-sizing: border-box;
 }
@@ -53,9 +53,9 @@ span {
   display: inline-flex;
   height: 40px;
   width: 150px;
-  border: 2px solid #212529;
+  border: 2px solid #0080ff;
   margin: 20px 20px 20px 20px;
-  color: #212529;
+  color: #000000;
   text-transform: uppercase;
   text-decoration: none;
   font-size: .8em;
@@ -66,7 +66,7 @@ span {
 }
 
 a {
-  color: #e85093;
+  color: #000000;
   text-decoration: none;
   letter-spacing: 1px;
 }
