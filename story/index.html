@@ -1,30 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IsThisUser's Stories</title>
-  <link href="https://cdn.jsdelivr.net/npm/muan.css@latest" rel="stylesheet" type="text/css">
-  <!-- <script src="../dist/index.js" type="module" defer></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/story-view-element@latest" type="module" defer></script>
-</head>
-<body>
-  <header><h1><code>IsThisUser's Stories</code></h1></header>
-  <main>
-    <h2>Default</h2>
-    <story-view src="./feed.json" ttl="infinite"></story-view>
-    <h2>State and customizations</h2>
-    <h3>Empty</h3>
-    <story-view src="./feed.json" ttl="1"></story-view>
-    <h3>Custom button</h3>
-    <story-view src="./feed.json" ttl="infinite">
-      <div class="button button:type-submit">IsThisUser's Stories</div>
-    </story-view>
-    <h3>Duration</h3>
-    <story-view src="./feed.json" ttl="infinite" duration="20">
-      <div class="button button:type-submit">20 seconds per story</div>
-    </story-view>
-  </main>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IsThisUser's Stories</title>
+    <link href="https://cdn.jsdelivr.net/npm/muan.css@latest" rel="stylesheet" type="text/css">
+    <!-- <script src="../dist/index.js" type="module" defer></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/story-view-element@latest" type="module" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <code>IsThisUser's Stories</code>
+      </h1>
+    </header>
+    <main>
+      <h2>Default</h2>
+      <story-view src="./feed.json" ttl="infinite"></story-view>
+      <h2>State and customizations</h2>
+      <h3>Empty</h3>
+      <story-view src="./feed.json" ttl="1"></story-view>
+      <h3>Custom button</h3>
+      <story-view src="./feed.json" ttl="infinite">
+        <div class="button button:type-submit">IsThisUser's Stories</div>
+      </story-view>
+      <h3>Duration</h3>
+      <story-view src="./feed.json" ttl="infinite" duration="20">
+        <div class="button button:type-submit">20 seconds per story</div>
+      </story-view>
+    </main>
+  </body>
 </html>
