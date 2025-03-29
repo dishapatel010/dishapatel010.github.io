@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPI QR Code Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    #qrCode {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btn-group {
+      margin-top: 15px;
+      text-align: center;
+    }
+    button {
+      width: 45%;
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>UPI QR Code Generator</h2>
+    
+    <label>Select Payment Type:</label>
+    <select id="dataType" onchange="showInputFields(this.value)">
+      <option value="">-- Select --</option>
+      <option value="upi">UPI via Account Number & IFSC</option>
+      <option value="upiid">UPI via VPA (UPI ID)</option>
+    </select>
+
+    <div id="upiGroup" class="input-group" style="display: none;">
+      <label>Account Number:</label>
+      <input type="text" id="accountNo" placeholder="Enter Account Number">
+      <label>IFSC Code:</label>
+      <input type="text" id="ifscCode" placeholder="Enter IFSC Code">
+      <label>Payee Name:</label>
+      <input type="text" id="personName" placeholder="Enter Payee Name">
+    </div>
+
+    <div id="upiidGroup" class="input-group" style="display: none;">
+      <label>UPI ID:</label>
+      <input type="text" id="upiID" placeholder="Enter UPI ID (e.g., name@upi)">
+      <label>Payee Name:</label>
+      <input type="text" id="upiName" placeholder="Enter Payee Name">
+    </div>
+
+    <label>Amount (Optional):</label>
+    <input type="text" id="amount" placeholder="Enter Amount">
+
+    <label>Transaction Note (Optional):</label>
+    <input type="text" id="note" placeholder="Enter Transaction Note">
+
+    <label>Transaction Reference ID (Optional):</label>
+    <input type="text" id="txnRef" placeholder="Enter Transaction Reference ID">
+
+    <label>Transaction URL (Optional):</label>
+    <input type="text" id="url" placeholder="Enter Transaction URL">
+
+    <label>Merchant Category Code (Optional):</label>
+    <input type="text" id="mc" placeholder="Enter Merchant Category Code">
+
+    <label>Transaction ID (Optional):</label>
+    <input type="text" id="tid" placeholder="Enter PSP Transaction ID">
+
+    <label>GST Breakup (Optional):</label>
+    <input type="text" id="gstBrkUp" placeholder="Enter GST Amount">
+
+    <label>Invoice Number (Optional):</label>
+    <input type="text" id="invoiceNo" placeholder="Enter Invoice Number">
+
+    <label>Invoice Date (Optional):</label>
+    <input type="text" id="invoiceDate" placeholder="Enter Invoice Date (RFC 3339 format)">
+
+    <label>GSTIN (Optional):</label>
+    <input type="text" id="gstIn" placeholder="Enter GSTIN">
+
+    <div class="btn-group">
+      <button onclick="generateQRCode()">Generate QR Code</button>
+    </div>
+
+    <div id="qrCode"></div>
+
+    <div class="btn-group" id="printQRBtn" style="display: none;">
+      <button onclick="printQRCode()">Print QR</button>
+      <button onclick="downloadQRCode()">Download QR</button>
+    </div>
+
+    <a id="upilinkapp" style="display: none;" target="_blank">Open UPI Link</a>
+  </div>
+
+  <script>
+    var qrcode;
+
+    function showInputFields(dataType) {
+      var inputGroups = document.getElementsByClassName("input-group");
+      for (var i = 0; i < inputGroups.length; i++) {
+        inputGroups[i].style.display = "none";
+      }
+
+      if (dataType !== "") {
+        document.getElementById(dataType + "Group").style.display = "block";
+      }
+    }
+
+    function generateQRCode() {
+      var dataType = document.getElementById("dataType").value;
+      var name, upiID, accountNo, ifscCode;
+
+      var amount = document.getElementById("amount").value;
+      var note = document.getElementById("note").value;
+      var txnRef = document.getElementById("txnRef").value;
+      var url = document.getElementById("url").value;
+      var mc = document.getElementById("mc").value;
+      var tid = document.getElementById("tid").value;
+      var gstBrkUp = document.getElementById("gstBrkUp").value;
+      var invoiceNo = document.getElementById("invoiceNo").value;
+      var invoiceDate = document.getElementById("invoiceDate").value;
+      var gstIn = document.getElementById("gstIn").value;
+
+      if (dataType === "upiid") {
+        name = document.getElementById("upiName").value;
+        upiID = document.getElementById("upiID").value;
+        generateUPIIDQRCode(name, upiID, amount, note, txnRef, url);
+      } else if (dataType === "upi") {
+        accountNo = document.getElementById("accountNo").value;
+        ifscCode = document.getElementById("ifscCode").value;
+        name = document.getElementById("personName").value;
+        generateUPIQRCode(accountNo, ifscCode, name, amount, note, txnRef, mc, tid, url, gstBrkUp, invoiceNo, invoiceDate, gstIn);
+      }
+    }
+
+    function generateUPIIDQRCode(name, upiID, amount, note, txnRef, url) {
+      var upiLink = "upi://pay?pa=" + upiID + "&pn=" + encodeURIComponent(name);
+
+      if (amount) upiLink += "&am=" + amount;
+      if (note) upiLink += "&tn=" + encodeURIComponent(note);
+      if (txnRef) upiLink += "&tr=" + txnRef;
+      if (url) upiLink += "&url=" + encodeURIComponent(url);
+
+      generateQRCodeFromData(upiLink);
+      showDownloadAndPrintButtons(upiLink);
+    }
+
+    function generateUPIQRCode(accountNo, ifscCode, personName, amount, note, txnRef, mc, tid, url, gstBrkUp, invoiceNo, invoiceDate, gstIn) {
+      var upiLink = "upi://pay?pa=" + accountNo + "@" + ifscCode + "&pn=" + encodeURIComponent(personName);
+
+      if (amount) upiLink += "&am=" + amount;
+      if (note) upiLink += "&tn=" + encodeURIComponent(note);
+      if (txnRef) upiLink += "&tr=" + txnRef;
+      if (mc) upiLink += "&mc=" + mc;
+      if (tid) upiLink += "&tid=" + tid;
+      if (url) upiLink += "&url=" + encodeURIComponent(url);
+      if (gstBrkUp) upiLink += "&gstBrkUp=" + encodeURIComponent(gstBrkUp);
+      if (invoiceNo) upiLink += "&invoiceNo=" + invoiceNo;
+      if (invoiceDate) upiLink += "&invoiceDate=" + encodeURIComponent(invoiceDate);
+      if (gstIn) upiLink += "&gstIn=" + gstIn;
+
+      generateQRCodeFromData(upiLink);
+      showDownloadAndPrintButtons(upiLink);
+    }
+
+    function generateQRCodeFromData(data) {
+      document.getElementById("qrCode").innerHTML = "";
+
+      qrcode = new QRCode(document.getElementById("qrCode"), {
+        text: data,
+        width: 200,
+        height: 200
+      });
+    }
+
+    function showDownloadAndPrintButtons(upiLink) {
+      document.getElementById("printQRBtn").style.display = "block";
+      document.getElementById("upilinkapp").style.display = "block";
+      document.getElementById("upilinkapp").setAttribute("href", upiLink);
+    }
+
+    function printQRCode() {
+      window.print();
+    }
+
+    function downloadQRCode() {
+      html2canvas(document.getElementById("qrCode")).then(function (canvas) {
+        var link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "qrcode.png";
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
